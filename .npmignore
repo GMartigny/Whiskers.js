@@ -1,0 +1,7 @@
+.idea/
+coverage/
+examples/
+tests/
+
+.eslintrc
+*.tgz

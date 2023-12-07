@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Todo list example</title>
+</head>
+<body>
+<script type="module">
+    import { reactive, render, renderStyle } from "../";
+
+    const note = (content, done = false) => ({
+        content,
+        done,
+    });
+
+    const saved = localStorage.getItem("data");
+
+    // Store for reactivity
+    const data = saved ? JSON.parse(saved) : {
+        input: "",
+        notes: [
+            note("Make a JS framework", true),
+            note("Test that it works", true),
+            note("Build something awesome with it"),
+            note("Profit ?"),
+        ],
+    };
+
+    // Task component (render and CSS)
+    const task = {
+        render: (item, el) => render(el || "li", {
+            class: "item",
+        }, [
+            // Re-render if item.done value change
+            reactive(item, "done", (done, el) => render(el || "label", {
+                class: `${done ? "done" : ""}`,
+            }, [
+                render("input", {
+                    type: "checkbox",
+                    checked: item.done,
+                    "@input": value => item.done = value,
+                }),
+                item.content,
+            ])),
+        ]),
+        css: {
+            ".item": {
+                padding: ".5em",
+
+                ".done": {
+                    "text-decoration": "line-through",
+                    color: "#0006",
+                },
+
+                // The "&" show that we reference the ".item" itself
+                "&:not(:last-child)": {
+                    "border-bottom": "1px dashed #0003",
+                },
+            },
+        },
+    };
+
+    // List component
+    const list = {
+        render: (notes, el) => render(el || "ul", {
+            class: "list",
+        }, notes),
+        css: {
+            ".list": {
+                "list-style": "none",
+                padding: 0,
+
+                // Add tasks CSS
+                ...task.css,
+            },
+        },
+    };
+
+    // App component
+    const app = {
+        render: () => render("main", {
+            class: "app",
+            // Event listener
+            "@input": () => {
+                localStorage.setItem("data", JSON.stringify(data));
+            },
+        }, [
+            reactive(data, "input", (value, el) => render(el || "input", {
+                "@input": value => data.input = value,
+                ".value": value,
+                placeholder: "Something to do",
+            })),
+            render("button", {
+                "@click": ({target}) => {
+                    data.notes.push(note(data.input));
+                    data.input = "";
+                    target.dispatchEvent(new InputEvent("input", {
+                        bubbles: true,
+                    }));
+                },
+            }, ["Add note"]),
+            reactive(data, "notes", list.render, task.render),
+        ]),
+        css: {
+            ".app": {
+                "background-color": "#fff",
+                "border-radius": "4px",
+                padding: "32px",
+                "box-shadow": "0 2px 8px #111",
+
+                // Add list CSS
+                ...list.css,
+            },
+        },
+    };
+
+    const styles = renderStyle({
+        html: {
+            "background-color": "#333",
+            height: "100vh",
+        },
+        body: {
+            display: "flex",
+            "justify-content": "center",
+            "align-items": "flex-start",
+
+            // Add app CSS
+            ...app.css,
+        },
+    });
+
+    document.body.appendChild(app.render());
+    document.head.appendChild(styles);
+</script>
+</body>
+</html>

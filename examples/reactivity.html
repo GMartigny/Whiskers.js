@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reactivity example</title>
+</head>
+<body>
+<script type="module">
+    import { render, reactive } from "../";
+
+    const data = {
+        count: 0,
+        text: "Whiskers.js",
+        items: [3, 2, 1],
+    };
+    window.data = data;
+
+    // Simple counter
+    const counter = render(undefined, [
+        render("button", {
+            "@click": () => data.count++,
+        }, "Increase"),
+        reactive(data, "count", (value, el) => render(el || "span", [value])),
+    ]);
+    document.body.appendChild(counter);
+
+    // Input
+    const input = render(undefined, [
+        render("input", {
+            "@input": value => data.text = value,
+            value: data.text,
+        }),
+        reactive(data, "text", (value, el) => render(el || "span", value)),
+    ]);
+    document.body.appendChild(input);
+
+    // Array
+    const list = render(undefined, [
+        render("button", {
+            "@click": () => data.items.unshift((data.items[0] ?? 0) + 1),
+        }, "+"),
+        render("button", {
+            "@click": () => data.items.pop(),
+        }, "-"),
+        reactive(
+            data,
+            "items",
+            (items, el) => render(el || "ul", items),
+            (value, el) => render(el || "li", value),
+        ),
+    ]);
+    document.body.appendChild(list);
+</script>
+</body>
+</html>

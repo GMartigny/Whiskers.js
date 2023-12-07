@@ -1,0 +1,36 @@
+{
+  "name": "@gmartigny/whiskers.js",
+  "version": "0.0.0",
+  "description": "Minimalist HTML-in-JS reactive framework",
+  "main": "dist/whiskers.min.js",
+  "type": "module",
+  "module": "index.js",
+  "sideEffects": false,
+  "unpkg": "dist/whiskers.min.js",
+  "scripts": {
+    "lint": "eslint ./*.js",
+    "test": "c8 --reporter lcov ava",
+    "build": "rollup index.js -p terser -o dist/whiskers.min.js",
+    "preversion": "npm t",
+    "version": "npm run build && git add dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/GMartigny/whiskers.js.git"
+  },
+  "author": "GMartigny",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/GMartigny/whiskers.js/issues"
+  },
+  "homepage": "https://github.com/GMartigny/whiskers.js#readme",
+  "devDependencies": {
+    "@gmartigny/eslint-config": "^2.2.0",
+    "@rollup/plugin-terser": "^0.4.4",
+    "ava": "^6.0.1",
+    "c8": "^8.0.1",
+    "eslint": "^8.55.0",
+    "jsdom": "^23.0.1",
+    "rollup": "^4.6.1"
+  }
+}

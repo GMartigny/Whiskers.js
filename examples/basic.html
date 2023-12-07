@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Basic rendering example</title>
+</head>
+<body>
+<script type="module">
+    import { render, renderStyle } from "../";
+
+    const paragraphs = [
+        "Minimalist HTML-in-JS reactive framework.",
+        "With very simple logic, you can already build elegant apps.",
+        "So go out there and create something fun.",
+    ];
+
+    // Main element
+    const app = render("main", {
+        class: "app",
+    }, [
+        // With children
+        render("h1", ["Whiskers.js"]),
+        ...paragraphs.map(text => render("p", [text])),
+    ]);
+
+    // Some style
+    const style = renderStyle({
+        body: {
+            background: "#333",
+
+            ".app": {
+                color: "#fff",
+
+                // For native tags, you have to prefix with "&"
+                "& h1": {
+                    "font-family": "impact",
+                    "font-weight": "normal",
+                    "letter-spacing": ".1em",
+                }
+            },
+        },
+    });
+
+    document.body.appendChild(app);
+    document.head.appendChild(style);
+</script>
+</body>
+</html>
