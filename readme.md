@@ -1,5 +1,8 @@
 # Whiskers.js 😸
 
+[![NPM version](https://flat.badgen.net/npm/v/@gmartigny/whiskers.js)](https://www.npmjs.com/package/@gmartigny/whiskers.js)
+[![](https://flat.badgen.net/bundlephobia/min/@gmartigny/whiskers.js)](https://bundlephobia.com/package/@gmartigny/whiskers.js)
+
 Minimalist HTML-in-JS reactive framework
 
 
