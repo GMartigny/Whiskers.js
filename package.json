@@ -1,6 +1,6 @@
 {
   "name": "@gmartigny/whiskers.js",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Minimalist HTML-in-JS reactive framework",
   "main": "dist/whiskers.min.js",
   "type": "module",
