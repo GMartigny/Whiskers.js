@@ -117,5 +117,6 @@ function renderStyle (styles) {
 export {
     render,
     renderStyle,
+    getCSS,
     reactive,
 };

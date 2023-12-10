@@ -9,7 +9,7 @@
   "unpkg": "dist/whiskers.min.js",
   "scripts": {
     "lint": "eslint ./*.js",
-    "test": "c8 --reporter lcov ava",
+    "test": "c8 -r html -r text ava",
     "build": "rollup index.js -p terser -o dist/whiskers.min.js",
     "preversion": "npm t",
     "version": "npm run build && git add dist"
