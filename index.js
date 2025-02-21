@@ -14,6 +14,8 @@ function getNodeValue (input) {
     }
 }
 
+const listeners = new WeakMap();
+
 /**
  * Build an HTML element
  * @param {string|HTMLElement} [element = "div"] - Element to create or reuse
@@ -33,6 +35,9 @@ function render (element, props, children) {
 
     const node = element instanceof Node ? element : document.createElement(element || "div");
 
+    listeners.get(node)?.forEach(params => node.removeEventListener(...params));
+    listeners.delete(node);
+
     let nested = children;
     if (children === undefined && props?.constructor !== Object) {
         nested = props;
@@ -44,9 +49,21 @@ function render (element, props, children) {
                     node[key.slice(1)] = props[key];
                     break;
                 case key.startsWith("@"):
-                    node.addEventListener(key.slice(1), (event) => {
-                        props[key](key === "@input" && node instanceof HTMLInputElement ? getNodeValue(node) : event);
-                    });
+                    // eslint-disable-next-line no-case-declarations
+                    const params = [
+                        key.slice(1),
+                        (event) => {
+                            const isInput = key === "@input" && node instanceof HTMLInputElement;
+                            props[key](isInput ? getNodeValue(node) : event);
+                        },
+                    ];
+                    node.addEventListener(...params);
+                    if (listeners.has(node)) {
+                        listeners.get(node).push(params);
+                    }
+                    else {
+                        listeners.set(node, [params]);
+                    }
                     break;
                 default:
                     if (props[key] || props[key] === "") {
