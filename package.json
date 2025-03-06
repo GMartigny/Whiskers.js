@@ -8,11 +8,12 @@
   "sideEffects": false,
   "unpkg": "dist/whiskers.min.js",
   "scripts": {
-    "lint": "eslint ./*.js",
-    "test": "c8 -r html -r text ava",
-    "build": "rollup index.js -p terser -o dist/whiskers.min.js",
-    "preversion": "npm t",
-    "version": "npm run build && git add dist"
+    "lint": "npx eslint ./*.js",
+    "test": "npx c8 -r html -r text ava",
+    "test:ci": "npx c8 -r lcovonly -r text ava",
+    "build": "npx rollup index.js -p terser -o dist/whiskers.min.js",
+    "preversion": "npm test",
+    "prepack": "npm run build"
   },
   "repository": {
     "type": "git",
