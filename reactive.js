@@ -122,7 +122,7 @@ function reactiveArray (context, target, render, childrenRender) {
     function reflow (func, args) {
         switch (func) {
             case "push":
-                args.forEach(node => wrapper.appendChild(childrenRender(node)));
+                args.forEach(value => wrapper.appendChild(childrenRender(value)));
                 break;
             case "pop":
                 if (wrapper.lastChild) {
@@ -146,19 +146,16 @@ function reactiveArray (context, target, render, childrenRender) {
                 }
                 break;
             case "unshift":
-                args.forEach((node) => {
+                args.forEach((value) => {
                     if (wrapper.children.length) {
-                        wrapper.insertBefore(childrenRender(node), wrapper.firstChild);
+                        wrapper.insertBefore(childrenRender(value), wrapper.firstChild);
                     }
                     else {
-                        wrapper.appendChild(childrenRender(node));
+                        wrapper.appendChild(childrenRender(value));
                     }
                 });
                 break;
             default:
-                if (wrapper.innerHTML) {
-                    console.warn("Total reflow of", wrapper);
-                }
                 wrapper.innerHTML = "";
                 values.forEach(node => wrapper.appendChild(childrenRender(node)));
         }
@@ -172,6 +169,7 @@ function reactiveArray (context, target, render, childrenRender) {
                 throw new window.TypeError(`Value of ${target} should be an array.`);
             }
             values = new EmitterArray(...newValue);
+            values.setOnChange(reflow);
             reflow();
         },
     });

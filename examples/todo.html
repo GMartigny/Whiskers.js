@@ -94,11 +94,11 @@
                 "@click": ({target}) => {
                     data.notes.push(note(data.input));
                     data.input = "";
-                    target.dispatchEvent(new InputEvent("input", {
+                    target.dispatchEvent(new CustomEvent("input", {
                         bubbles: true,
                     }));
                 },
-            }, ["Add note"]),
+            }, "Add note"),
             reactive(data, "notes", list.render, task.render),
         ]),
         css: {

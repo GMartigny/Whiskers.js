@@ -19,8 +19,8 @@
         class: "app",
     }, [
         // With children
-        render("h1", ["Whiskers.js"]),
-        ...paragraphs.map(text => render("p", [text])),
+        render("h1", "Whiskers.js"),
+        ...paragraphs.map(text => render("p", text)),
     ]);
 
     // Some style
