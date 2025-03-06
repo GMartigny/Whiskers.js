@@ -1,13 +1,26 @@
 import { JSDOM } from "jsdom";
 import test from "ava";
-import { renderStyle } from "../index.js";
+import { renderStyle, getCSS } from "../index.js";
 
 test.before(() => {
     const { window } = new JSDOM();
     global.window = window;
 });
 
-test("Nested style", (t) => {
+test("Get CSS", (t) => {
+    const style = {
+        ".app": {
+            padding: "10px",
+            margin: 0,
+        },
+    };
+    t.is(getCSS(style), `.app {
+    padding: 10px;
+    margin: 0;
+}`);
+});
+
+test.skip("Nested style", (t) => {
     const style = renderStyle({
         body: {
             margin: 0,

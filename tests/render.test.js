@@ -46,15 +46,23 @@ test("Event Listeners", (t) => {
         bubbles: true,
     }));
 
-    // const isCute = render("input", {
-    //     type: "checkbox",
-    //     ".checked": true,
-    //     ".value": "is-cute",
-    //     "@input": value => t.true(value),
-    // });
-    // isCute.dispatchEvent(new CustomEvent("input"));
+    const isCute = render("input", {
+        type: "checkbox",
+        checked: true,
+        value: "is-cute",
+        "@input": value => t.true(value),
+    });
+    isCute.dispatchEvent(new window.CustomEvent("input"));
 
-    t.plan(1);
+    t.plan(2);
+});
+
+test("CSS var", (t) => {
+    const element = render("span", {
+        "--color": "red",
+    });
+
+    t.is(element.outerHTML, "<span style=\"--color: red;\"></span>");
 });
 
 test("Property", (t) => {

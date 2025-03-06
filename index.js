@@ -19,8 +19,8 @@ const listeners = new WeakMap();
 /**
  * Build an HTML element
  * @param {string|HTMLElement} [element = "div"] - Element to create or reuse
- * @param {Object} [props] - Set of attributes, prefix with "@" for event listeners and "." for properties
- * @param {(HTMLElement|string)[]|(HTMLElement|string)} [children] - List of children to append
+ * @param {Object} [props] - Set of attributes, prefix with "@" for event listeners, "--" for CSS variables and "." for properties
+ * @param {(string|HTMLElement)[]|(string|HTMLElement)} [children] - List of children to append
  * @returns {HTMLElement}
  * @example
  * render("main", {
@@ -31,7 +31,7 @@ const listeners = new WeakMap();
  * ]);
  */
 function render (element, props, children) {
-    const { Node, document, Text } = window;
+    const { Node, document, Text, HTMLInputElement } = window;
 
     const node = element instanceof Node ? element : document.createElement(element || "div");
 
@@ -64,6 +64,9 @@ function render (element, props, children) {
                     else {
                         listeners.set(node, [params]);
                     }
+                    break;
+                case key.startsWith("--"):
+                    node.style.setProperty(key, props[key]);
                     break;
                 default:
                     if (props[key] || props[key] === "") {
