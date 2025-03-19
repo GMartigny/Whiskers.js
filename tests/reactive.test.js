@@ -1,5 +1,6 @@
 import { JSDOM } from "jsdom";
 import test from "ava";
+import spy from "./spies.js";
 import { render, reactive } from "../index.js";
 
 test.before(() => {
@@ -76,4 +77,28 @@ test("Array", (t) => {
     t.is(app.outerHTML, "<ul><li>Kitty</li><li>Felix</li></ul>");
 
     t.throws(() => data.cats = null);
+});
+
+test("Headless", (t) => {
+    const data = {
+        simple: 42,
+        array: [1, 2],
+    };
+
+    let expectedSimple = data.simple;
+    const callbackSimple = spy((value) => {
+        t.is(value, expectedSimple);
+    });
+    reactive(data, "simple", callbackSimple);
+    expectedSimple = 1234;
+    data.simple = expectedSimple;
+    t.deepEqual(callbackSimple.called, [[42], [1234, undefined]]);
+
+    const callbackArray = spy((value) => {
+        t.deepEqual([...value], [...data.array]);
+    });
+    reactive(data, "array", callbackArray);
+    data.array.push(3);
+    data.array.pop();
+    t.is(callbackArray.called.length, 3);
 });

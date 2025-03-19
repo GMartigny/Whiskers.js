@@ -108,12 +108,12 @@ class EmitterArray extends Array {
  * @param {Object} context - Store holding data
  * @param {string} target - Field to observe
  * @param {renderCallback} render - Render callback called on change
- * @param {renderCallback} childrenRender - Render callback for each child
+ * @param {renderCallback} [childrenRender] - Render callback for each child
  * @return {*}
  */
 function reactiveArray (context, target, render, childrenRender) {
     let values = new EmitterArray(...context[target]);
-    const wrapper = render(values.map(value => childrenRender(value)));
+    const wrapper = render(values);
 
     /**
      * @param {string} [func] -
@@ -142,7 +142,7 @@ function reactiveArray (context, target, render, childrenRender) {
                 }
                 if (added.length) {
                     const pivot = wrapper.children[index] ?? null;
-                    added.forEach(node => wrapper.insertBefore(childrenRender(node), pivot));
+                    added.forEach(value => wrapper.insertBefore(childrenRender(value), pivot));
                 }
                 break;
             case "unshift":
@@ -157,10 +157,17 @@ function reactiveArray (context, target, render, childrenRender) {
                 break;
             default:
                 wrapper.innerHTML = "";
-                values.forEach(node => wrapper.appendChild(childrenRender(node)));
+                values.forEach(value => wrapper.appendChild(childrenRender(value)));
         }
     }
-    values.setOnChange(reflow);
+    const setOnChange = () => {
+        const onChange = childrenRender ? reflow : () => render(values);
+        values.setOnChange(onChange);
+        if (childrenRender) {
+            reflow();
+        }
+    };
+    setOnChange();
 
     Object.defineProperty(context, target, {
         get: () => values,
@@ -169,8 +176,8 @@ function reactiveArray (context, target, render, childrenRender) {
                 throw new window.TypeError(`Value of ${target} should be an array.`);
             }
             values = new EmitterArray(...newValue);
-            values.setOnChange(reflow);
-            reflow();
+
+            setOnChange();
         },
     });
 
