@@ -2,7 +2,7 @@ import reactive from "./reactive.js";
 
 /**
  * Get the value of an input element
- * @param {HTMLInputElement} input - Any type of input element to read the value from
+ * @param {HTMLInputElement} input Any type of input element to read the value from
  * @return {*}
  */
 function getNodeValue (input) {
@@ -18,9 +18,9 @@ const listeners = new WeakMap();
 
 /**
  * Build an HTML element
- * @param {string|HTMLElement} [element = "div"] - Element to create or reuse
- * @param {Object} [props] - Set of attributes, prefix with "@" for event listeners, "--" for CSS variables and "." for properties
- * @param {(string|HTMLElement)[]|(string|HTMLElement)} [children] - List of children to append
+ * @param {string|HTMLElement} [element = "div"] Element to create or reuse
+ * @param {Object} [props] Set of attributes, prefix with "@" for event listeners, "--" for CSS variables and "." for properties
+ * @param {(string|HTMLElement)[]|(string|HTMLElement)} [children] List of children to append
  * @returns {HTMLElement}
  * @example
  * render("main", {
@@ -95,8 +95,8 @@ function render (element, props, children) {
 
 /**
  * Turn a nested object into a CSS string
- * @param {CSSDefinition} styles - CSS style definition
- * @param {number} [depth = 0] - Current nesting depth
+ * @param {CSSDefinition} styles CSS style definition
+ * @param {number} [depth = 0] Current nesting depth
  * @return {string}
  */
 function getCSS (styles, depth = 0) {
@@ -118,7 +118,7 @@ ${indent}${key}: ${styles[key].toString()};`;
 
 /**
  * Build a style element
- * @param {CSSDefinition|string} styles - CSS style definition
+ * @param {CSSDefinition|string} styles CSS style definition
  * @returns {HTMLStyleElement}
  * @example
  * renderStyle({
