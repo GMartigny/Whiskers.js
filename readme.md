@@ -1,180 +1,182 @@
 # Whiskers.js 😸
 
 [![NPM version](https://img.shields.io/npm/v/@gmartigny/whiskers.js?style=flat-square)](https://www.npmjs.com/package/@gmartigny/whiskers.js)
-[![Minifies bundle size](https://img.shields.io/bundlephobia/min/@gmartigny/whiskers.js?style=flat-square)](https://bundlephobia.com/package/@gmartigny/whiskers.js)
-[![Code coverage](https://flat.badgen.net/codeclimate/coverage/GMartigny/Whiskers.js)](https://codeclimate.com/github/GMartigny/Whiskers.js)
+[![Bundle size](https://img.shields.io/bundlejs/size/@gmartigny/whiskers.js?style=flat-square)](https://bundlejs.com/?q=@gmartigny/whiskers.js)
+[![CI](https://img.shields.io/github/actions/workflow/status/GMartigny/whiskers.js/ci.yaml?style=flat-square)](https://github.com/GMartigny/whiskers.js/actions)
 
-Minimalist HTML-in-JS reactive framework
+Minimalist HTML-in-JS reactive framework.
+
+- **Simple**: 5 functions, no build step, no virtual DOM, no magic.
+- **Light**: about 2 kB gzipped, zero dependencies.
+- **Typed**: written in TypeScript, types included.
+
+Whiskers.js is made for small widgets, demos and side projects, not for complex applications.
 
 
 ## Installation
 
-### Registry
+### From npm
 
-    npm install @gmartigny/whiskers.js
+```shell
+npm install @gmartigny/whiskers.js
+```
 
-### CDN
+```js
+import { render, reactive, renderStyle } from "@gmartigny/whiskers.js";
+```
 
-    https://unpkg.com/@gmartigny/whiskers.js
+### From a CDN
+
+No install needed, import it right into a page:
+
+```html
+<script type="module">
+    import { render, reactive } from "https://unpkg.com/@gmartigny/whiskers.js@2";
+</script>
+```
 
 
 ## Usage
 
-### Basic rendering
+### Render elements
 
-Prepare elements in order to append them to the DOM.
+`render(tag, props, children)` creates an element. Props and children are both optional.
 
 ```js
-import { render } from "@gmartigny/whiskers.js";
-
-const app = render("main", {
-    class: "app",
-}, [
-    render("h1", "Whisker.js"),
+const app = render("main", { class: "app" }, [
+    render("h1", "Whiskers.js"),
     render("p", "Minimalist HTML-in-JS reactive framework."),
 ]);
 
 document.body.appendChild(app);
 ```
 
-
-### CSS
-
-Turn an object into a style element.
-
-```js
-import { renderStyle } from "@gmartigny/whiskers.js";
-
-const style = renderStyle({
-    body: {
-        "background-color": "#654321",
-        
-        ".nested": {
-            padding: "2em",
-        },
-    },
-});
-
-document.head.appendChild(style);
-```
-
-
-### Reactivity
-
-Rerender on each change of the data.
-
-```js
-import { render, reactive } from "@gmartigny/whiskers.js";
-
-const data = {
-    count: 0,
-};
-
-const counter = render(undefined, [
-    render("button", {
-        "@click": () => data.count++,
-    }, "Increase"),
-    reactive(data, "count", (value, el) => render(el || "span", value)),
-]);
-
-document.body.appendChild(counter);
-```
-
-### List rendering
-
-Render a list of items.
-
-```js
-import { render, reactive } from "@gmartigny/whiskers.js";
-
-const data = {
-    list: ["Minimalist", "Ergonomic", "Fun"],
-}
-
-const parentRender = (node) => render(node ?? "ul");
-const childRender = (value) => render("li", value);
-const element = reactive(data, "list", parentRender, childRender)
-
-document.body.appendChild(element);
-```
-
-### Headless
-
-React to changes without rendering.
-
-```js
-import { reactive } from "@gmartigny/whiskers.js";
-
-const data = {
-    value: 42,
-};
-
-reactive(data, "value", (value) => {
-    console.log(value); // => 42 the first time, 1234 the second time
-});
-data.value = 1234;
-```
-
-### Complete example
-
-[Todo app](./examples/todo.html)
-
-
-### API
-
-#### `render`
-
-| Property  | Type                                              | Default | Description                                                                                           |
-|-----------|---------------------------------------------------|---------|-------------------------------------------------------------------------------------------------------|
-| element   | `string \| HTMLElement`                           | `"div"` | Element to create or reuse                                                                            |
-| props?    | `Object`                                          |         | Set of attributes, prefix with "@" for event listeners, "--" for CSS variables and "." for properties |
-| children? | `string\|HTMLElement\|Array<string\|HTMLElement>` |         | List of children to append                                                                            |
+Props follow a few simple conventions:
 
 ```js
 render("input", {
-    // DOM property
+    // Attribute (false, null and undefined remove it, true sets it empty)
     type: "checkbox",
-    // Property set in RAM
-    ".private": "",
+    disabled: false,
+    // Class as a string, an array or an object of conditions
+    class: { field: true, checked: isChecked },
+    // DOM property, not visible in the HTML
+    ".indeterminate": true,
     // CSS variable
     "--color": "goldenrod",
-    // Event listener
-    "@input": value => console.assert(typeof value === "boolean"),
-})
+    // Event listener: form fields receive their value, then the event
+    "@input": (checked, event) => console.log(checked),
+});
 ```
 
-#### `reactive`
+Children can be elements, text, numbers or arrays of them. `null`, `undefined` and booleans render nothing, which is handy for conditions:
 
-| Property        | Type       | Default | Description                                            |
-|-----------------|------------|---------|--------------------------------------------------------|
-| data            | `Object`   |         | Store holding data                                     |
-| key             | `string`   |         | Field to observe                                       |
-| render          | `Function` |         | Render callback called on change                       |
-| childrenRender? | `Function` |         | Render callback for each child when observing an array |
-
-const data = {
 ```js
-const data = {
-    value: 42,
-    array: [1, 2, 3],
-};
-// For a single value
-reactive(
-    data,
-    "value",
-    // Called on each changes
-    (value) => {},
-);
-// For an array
-reactive(
-    data,
-    "array",
-    // Called once on initialization
-    (values) => {},
-    // Called on each values and then for each update
-    (value) => {},
-);
+render("p", [user.name, user.isAdmin && render("b", " (admin)")]);
 ```
+
+Pass an existing element instead of a tag to update it. Only what you give is changed: omitted children are kept, while new props replace the previous ones.
+
+```js
+const title = render("h1", "Hello");
+render(title, "Hello again");
+```
+
+For SVG, use the `svg` tag and prefix its children with `svg:`:
+
+```js
+render("svg", { viewBox: "0 0 10 10" }, render("svg:circle", { cx: 5, cy: 5, r: 4 }));
+```
+
+### React to changes
+
+`reactive(data, key, callback)` calls the callback right away, then each time `data[key]` changes. The callback receives the new value and what it returned last time, so an element can be reused:
+
+```js
+const data = { count: 0 };
+
+const counter = render("div", [
+    render("button", { "@click": () => data.count++ }, "Increase"),
+    reactive(data, "count", (count, el) => render(el ?? "span", count)),
+]);
+```
+
+It also works without any rendering:
+
+```js
+reactive(data, "count", count => console.log(count)); // logs 0
+data.count = 42; // logs 42
+```
+
+### Render lists
+
+For an array, add a second callback to render each item. The first callback creates the list container once.
+
+```js
+const data = { cats: ["Felix", "Garfield"] };
+
+const list = reactive(
+    data,
+    "cats",
+    () => render("ul"),
+    cat => render("li", cat),
+);
+
+data.cats.push("Salem"); // adds a <li>
+data.cats.sort(); // moves the existing <li>, nothing is re-rendered
+data.cats = ["Tom"]; // replacing the whole array works too
+```
+
+Every change is detected: `push`, `splice`, `sort`, index assignment (`data.cats[0] = "Tom"`), `length`…
+
+### Stop reacting
+
+```js
+unreactive(data, "count"); // a single prop
+unreactive(data); // every prop of the object
+```
+
+### Style
+
+`renderStyle(styles)` turns an object into a `<style>` element, using native CSS nesting:
+
+```js
+document.head.appendChild(renderStyle({
+    ".app": {
+        backgroundColor: "#654321", // camelCase or "kebab-case"
+        padding: "2em",
+
+        "& h1": {
+            fontSize: "3em",
+        },
+    },
+}));
+```
+
+Use `getCSS(styles)` to get the CSS string only.
+
+
+## Examples
+
+The [examples](./examples) folder has a basic page, a reactivity demo and a complete todo app. Build the library first (`npm run build`), then open them through any local web server.
+
+
+## API
+
+| Function                                   | Returns          | Description                                                     |
+|--------------------------------------------|------------------|-----------------------------------------------------------------|
+| `render(element?, props?, children?)`      | `Element`        | Create an element (default `"div"`) or update an existing one   |
+| `reactive(data, key, callback)`            | Callback result  | Call `callback(value, previous)` now and on each change         |
+| `reactive(data, key, container, item)`     | Container        | Render an array, `item(value)` is called for each new item      |
+| `unreactive(data, key?)`                   | –                | Stop reacting to one or every prop                              |
+| `renderStyle(styles, element?)`            | `HTMLStyleElement` | Create (or update) a style element from an object or a string |
+| `getCSS(styles)`                           | `string`         | Turn a style object into CSS                                    |
+
+
+## Upgrading from v1
+
+See the [changelog](./CHANGELOG.md#200) for the breaking changes and how to migrate.
+
 
 ## License
 

@@ -6,7 +6,7 @@
 </head>
 <body>
 <script type="module">
-    import { reactive, render, renderStyle } from "../";
+    import { reactive, render, renderStyle } from "../dist/index.js";
 
     const note = (content, done = false) => ({
         content,
@@ -28,12 +28,12 @@
 
     // Task component (render and CSS)
     const task = {
-        render: (item, el) => render(el || "li", {
+        render: item => render("li", {
             class: "item",
         }, [
             // Re-render if item.done value change
             reactive(item, "done", (done, el) => render(el || "label", {
-                class: `${done ? "done" : ""}`,
+                class: { done },
             }, [
                 render("input", {
                     type: "checkbox",
@@ -48,7 +48,7 @@
                 padding: ".5em",
 
                 ".done": {
-                    "text-decoration": "line-through",
+                    textDecoration: "line-through",
                     color: "#0006",
                 },
 
@@ -62,9 +62,9 @@
 
     // List component
     const list = {
-        render: (notes, el) => render(el || "ul", {
+        render: () => render("ul", {
             class: "list",
-        }, notes),
+        }),
         css: {
             ".list": {
                 "list-style": "none",

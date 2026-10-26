@@ -6,7 +6,7 @@
 </head>
 <body>
 <script type="module">
-    import { render, reactive } from "../";
+    import { render, reactive } from "../dist/index.js";
 
     const data = {
         count: 0,
@@ -44,8 +44,8 @@
         reactive(
             data,
             "items",
-            (items, el) => render(el || "ul", items),
-            (value, el) => render(el || "li", value),
+            () => render("ul"),
+            value => render("li", value),
         ),
     ]);
     document.body.appendChild(list);
