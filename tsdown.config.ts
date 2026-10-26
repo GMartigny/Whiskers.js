@@ -7,6 +7,12 @@ export default defineConfig({
     target: "es2022",
     dts: true,
     minify: true,
+    treeshake: {
+        // Props reads never have side effects in this library
+        propertyReadSideEffects: false,
+    },
     sourcemap: true,
     clean: true,
+    publint: true,
+    attw: { profile: "esm-only" },
 });

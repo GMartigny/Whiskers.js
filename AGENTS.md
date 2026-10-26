@@ -19,7 +19,7 @@ Every change must respect the three founding principles:
 | `npm run typecheck`  | `tsc --noEmit` on sources and tests                            |
 | `npm test`           | Vitest + happy-dom with v8 coverage (thresholds at 100 %)      |
 | `npm run test:watch` | Vitest in watch mode                                           |
-| `npm run build`      | tsdown: minified ESM, source map and `.d.ts` in `dist/`        |
+| `npm run build`      | tsdown: minified ESM, source map and `.d.ts` in `dist/`, then validates the package with publint and attw |
 
 TypeScript is pinned to `~6.0` because typescript-eslint doesn't support TypeScript 7 yet.
 
