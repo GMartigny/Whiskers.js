@@ -146,25 +146,41 @@ function toNode (child: Child): Node {
  * @returns Items and nodes of this render
  */
 function reconcile<I> (parent: ParentNode, previous: [I, Node][], values: I[], renderItem: ItemRenderCallback<I>): [I, Node][] {
-    const pool = new Map<I, Node[]>();
-    previous.forEach(([value, node]) => pool.set(value, [...(pool.get(value) ?? []), node]));
-
     // Array.from also fills sparse arrays' holes
-    const next = Array.from(values, (value): [I, Node] => [value, pool.get(value)?.shift() ?? toNode(renderItem(value))]);
+    const items = Array.from(values);
+
+    // Skip the unchanged start and end of the list: a push, pop, shift or unshift only touches the edges
+    let start = 0;
+    while (start < previous.length && start < items.length && (previous[start] as [I, Node])[0] === items[start]) {
+        start++;
+    }
+    let previousEnd = previous.length;
+    let end = items.length;
+    while (previousEnd > start && end > start && (previous[previousEnd - 1] as [I, Node])[0] === items[end - 1]) {
+        previousEnd--;
+        end--;
+    }
+
+    // Reuse the nodes of the changed zone, wherever their item moved to
+    const pool = new Map<I, Node[]>();
+    previous.slice(start, previousEnd).forEach(([value, node]) => pool.set(value, [...(pool.get(value) ?? []), node]));
+
+    const changed = items.slice(start, end).map((value): [I, Node] => [value, pool.get(value)?.shift() ?? toNode(renderItem(value))]);
 
     pool.forEach(nodes => nodes.forEach(node => node.parentNode?.removeChild(node)));
 
-    // Place nodes from the end, moving only the ones out of place
-    let reference: Node | null = null;
-    for (let index = next.length - 1; index >= 0; index--) {
-        const [, node] = next[index] as [I, Node];
+    // Place nodes from the end of the changed zone, moving only the ones out of place
+    const after = previous.slice(previousEnd);
+    let reference: Node | null = after[0]?.[1] ?? null;
+    for (let index = changed.length - 1; index >= 0; index--) {
+        const [, node] = changed[index] as [I, Node];
         if (node.parentNode !== parent || node.nextSibling !== reference) {
             parent.insertBefore(node, reference);
         }
         reference = node;
     }
 
-    return next;
+    return [...previous.slice(0, start), ...changed, ...after];
 }
 
 /**
@@ -218,7 +234,8 @@ export function reactive (
         binding = {
             list: true,
             update: (values) => {
-                items = reconcile(parent, items, values as unknown[], itemRender);
+                // Read the raw array: going through the proxy would make every read slower
+                items = reconcile(parent, items, unwrap(values as unknown[]), itemRender);
             },
         };
         binding.update(entry.value);

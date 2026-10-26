@@ -23,6 +23,8 @@ Every change must respect the three founding principles:
 
 TypeScript is pinned to `~6.0` because typescript-eslint doesn't support TypeScript 7 yet.
 
+The `engines` field in `package.json` follows the strictest dev tool (tsdown, Vitest). The library itself runs in browsers and has no Node requirement, so keep that field in line with the tooling only.
+
 ## Layout
 
 ```
@@ -56,7 +58,7 @@ examples/       plain HTML pages importing ../dist/index.js
   - `rawArrays` maps proxies to raw arrays, so a proxy is never wrapped twice and `unreactive` restores the raw array;
   - a proxy only notifies while it is still the current value of its entry: a replaced array becomes inert.
 - Scalar binding: the callback receives `(value, previousResult)`. If it returns a different `Node`, the previous one is replaced in the DOM.
-- List binding (with `itemRender`): the container callback runs once, then `reconcile()` keeps an ordered list of `[item, node]`. Nodes are reused by `Map` lookup on the item value (duplicates handled with queues), leftovers are removed, and nodes are placed from the end, moving only the ones out of place. Item identity is the value itself: an object mutated in place keeps its node, make its own props reactive if needed.
+- List binding (with `itemRender`): the container callback runs once, then `reconcile()` keeps an ordered list of `[item, node]`. The unchanged start and end of the list are skipped by comparing items (so `push`, `pop`, `shift` and `unshift` don't inspect the other nodes), then in the changed zone nodes are reused by `Map` lookup on the item value (duplicates handled with queues), leftovers are removed, and nodes are placed from the end, moving only the ones out of place. The raw array is read, never the proxy, which is much slower. `tests/reconcile.test.ts` guards this with a count of node reads and a seeded random test. Item identity is the value itself: an object mutated in place keeps its node, make its own props reactive if needed.
 - `unreactive()` drops the bindings and puts back a plain writable property with the raw value.
 
 ### style
