@@ -84,3 +84,21 @@ examples/       plain HTML pages importing ../dist/index.js
 1. Update `CHANGELOG.md`.
 2. `npm version <major|minor|patch>`: runs `npm run check`, bumps `package.json` and creates the `vX.Y.Z` tag.
 3. `git push --follow-tags`: pushes to `main` run the checks only, the tag triggers the npm publication.
+
+### Trusted publishing (one-time setup)
+
+The `Publish` job has no npm token: it authenticates with npm through OIDC (`id-token: write`), and npm generates the provenance attestation automatically. It must be declared once on npmjs.com, in the package settings, section "Trusted Publisher" > GitHub Actions:
+
+| Field         | Value           |
+|---------------|-----------------|
+| Organization or user | `GMartigny` |
+| Repository    | `Whiskers.js` (same case as on GitHub) |
+| Workflow filename | `ci.yaml` (file name only, with the extension) |
+| Environment   | empty (the job doesn't use a GitHub environment) |
+
+Things to know:
+
+- npm doesn't validate the settings when saving them, mistakes only show up when publishing (`ENEEDAUTH`): check the workflow file name, its extension and `repository.url` in `package.json` (same case as the GitHub repository).
+- A new configuration must be used for a successful publish within 2 days, or it expires.
+- It needs npm 11.5.1 or later and a GitHub-hosted runner. The job uses Node 24, which ships a compatible npm.
+- Once a publish worked: delete the old `NPM_TOKEN` secret, revoke the token on npm, and in the package settings ("Publishing access") choose "Require two-factor authentication and disallow tokens".

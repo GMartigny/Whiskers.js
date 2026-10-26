@@ -1,6 +1,6 @@
 {
   "name": "@gmartigny/whiskers.js",
-  "version": "2.0.0",
+  "version": "1.4.1",
   "description": "Minimalist HTML-in-JS reactive framework",
   "keywords": [
     "dom",
@@ -39,14 +39,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/GMartigny/whiskers.js.git"
+    "url": "git+https://github.com/GMartigny/Whiskers.js.git"
   },
   "author": "GMartigny",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/GMartigny/whiskers.js/issues"
+    "url": "https://github.com/GMartigny/Whiskers.js/issues"
   },
-  "homepage": "https://github.com/GMartigny/whiskers.js#readme",
+  "homepage": "https://github.com/GMartigny/Whiskers.js#readme",
   "devDependencies": {
     "@arethetypeswrong/core": "^0.18.5",
     "@eslint/js": "^10.0.1",
