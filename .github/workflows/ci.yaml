@@ -30,12 +30,12 @@ jobs:
       - run: npm run typecheck
       - run: npm test
       - run: npm run build
-      - uses: qltysh/qlty-action/coverage@v2
-        if: github.ref == 'refs/heads/main'
-        continue-on-error: true
+      # Feeds the live coverage badge of the readme (the repo is created on coveralls.io by the first upload)
+      - uses: coverallsapp/github-action@v2
+        if: github.ref_type == 'branch'
         with:
-          token: ${{ secrets.QLTY_COVERAGE_TOKEN }}
-          files: coverage/lcov.info
+          file: coverage/lcov.info
+          fail-on-error: false
 
   Publish:
     needs: Check

@@ -85,6 +85,10 @@ examples/       plain HTML pages importing ../dist/index.js
 2. `npm version <major|minor|patch>`: runs `npm run check`, bumps `package.json` and creates the `vX.Y.Z` tag.
 3. `git push --follow-tags`: pushes to `main` run the checks only, the tag triggers the npm publication.
 
+### Badges and coverage
+
+The readme badges all come from [badgen](https://badgen.net) (`flat.badgen.net`); the size one reads [bundlejs](https://bundlejs.com). The coverage badge reads [Coveralls](https://coveralls.io/github/GMartigny/Whiskers.js): the `Check` job uploads `coverage/lcov.info` on each push and pull request (not on tags) with the default `GITHUB_TOKEN`, no secret is needed. The upload never fails the build (`fail-on-error: false`). The repository is created on Coveralls by the first upload.
+
 ### Trusted publishing (one-time setup)
 
 The `Publish` job has no npm token: it authenticates with npm through OIDC (`id-token: write`), and npm generates the provenance attestation automatically. It must be declared once on npmjs.com, in the package settings, section "Trusted Publisher" > GitHub Actions:

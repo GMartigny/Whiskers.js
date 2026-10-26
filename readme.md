@@ -1,8 +1,8 @@
 # Whiskers.js 😸
 
-[![NPM version](https://img.shields.io/npm/v/@gmartigny/whiskers.js?style=flat-square)](https://www.npmjs.com/package/@gmartigny/whiskers.js)
-[![Bundle size](https://img.shields.io/bundlejs/size/@gmartigny/whiskers.js?style=flat-square)](https://bundlejs.com/?q=@gmartigny/whiskers.js)
-[![CI](https://img.shields.io/github/actions/workflow/status/GMartigny/Whiskers.js/ci.yaml?style=flat-square)](https://github.com/GMartigny/Whiskers.js/actions)
+[![NPM version](https://flat.badgen.net/npm/v/@gmartigny/whiskers.js)](https://www.npmjs.com/package/@gmartigny/whiskers.js)
+[![Bundle size](https://flat.badgen.net/bundlejs/minzip/@gmartigny/whiskers.js)](https://bundlejs.com/?q=@gmartigny/whiskers.js)
+[![Code coverage](https://flat.badgen.net/coveralls/c/github/GMartigny/Whiskers.js)](https://coveralls.io/github/GMartigny/Whiskers.js)
 
 Minimalist HTML-in-JS reactive framework.
 
