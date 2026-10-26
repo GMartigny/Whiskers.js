@@ -230,8 +230,10 @@ export function reactive (
             update: (value) => {
                 const next = render(value, previous);
                 // Swap the node in place when the callback returned a new one
-                if (previous instanceof Node && next instanceof Node && next !== previous) {
-                    previous.parentNode?.replaceChild(next, previous);
+                // (the parent is checked first, so `Node` is never read without a DOM)
+                const parent = (previous as Partial<Node> | undefined)?.parentNode;
+                if (parent && next !== previous && next instanceof Node) {
+                    parent.replaceChild(next, previous as Node);
                 }
                 previous = next;
             },
